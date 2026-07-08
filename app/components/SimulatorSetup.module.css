@@ -1,0 +1,208 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+
+
+/* Two-column row */
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+/* Full-width field */
+.fieldFull {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Individual field */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Label */
+.label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+/* Text / Number inputs */
+.input {
+  width: 100%;
+  height: 48px;
+  padding: 0 14px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--text-primary);
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  outline: none;
+  transition: border-color 0.15s ease;
+  -moz-appearance: textfield;
+}
+
+.input::-webkit-outer-spin-button,
+.input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.input::placeholder {
+  color: var(--text-muted);
+}
+
+.input:focus {
+  border-color: var(--epson-blue);
+}
+
+/* Number input with custom controls */
+.numberInputWrapper {
+  display: flex;
+  height: 48px;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  background: var(--white);
+  overflow: hidden;
+  transition: border-color 0.15s ease;
+}
+
+.numberInputWrapper:focus-within {
+  border-color: var(--epson-blue);
+}
+
+.numberInput {
+  flex: 1;
+  height: 100%;
+  padding: 0 14px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--text-primary);
+  background: transparent;
+  border: none;
+  outline: none;
+  -moz-appearance: textfield;
+}
+
+.numberInput::-webkit-outer-spin-button,
+.numberInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.numberControls {
+  display: flex;
+  flex-direction: row;
+  border-left: 1px solid var(--border);
+}
+
+.numBtn {
+  width: 40px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8f9fa;
+  border: none;
+  border-left: 1px solid var(--border);
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--epson-blue);
+  transition: background 0.1s ease;
+}
+
+.numBtn:first-child {
+  border-left: none;
+}
+
+.numBtn:hover {
+  background: #eef2f6;
+}
+
+.numBtn:active {
+  background: #e2e8f0;
+}
+
+/* Select wrapper (to add custom chevron) */
+.selectWrapper {
+  position: relative;
+}
+
+.select {
+  width: 100%;
+  height: 48px;
+  padding: 0 40px 0 14px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--text-primary);
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.select:focus {
+  border-color: var(--epson-blue);
+}
+
+.selectChevron {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+}
+
+/* Projector Specs Display */
+.projectorSpecs {
+  margin-top: 12px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.specBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-base);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.specBadge strong {
+  color: var(--text-primary);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .row {
+    grid-template-columns: 1fr;
+  }
+}
