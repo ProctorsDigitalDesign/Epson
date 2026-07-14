@@ -12,7 +12,7 @@ const zoneColors = {
 const zoneLabels = {
   analytical: "Clear viewing",
   basic: "Basic viewing",
-  passive: "Limited viewing",
+  passive: "Passive/limited viewing",
   unviewable: "Out of range"
 };
 

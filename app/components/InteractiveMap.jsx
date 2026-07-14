@@ -64,7 +64,7 @@ export default function InteractiveMap({ seats, room, zones, screenWidthM, scree
     const zoneLabels = {
       analytical: "Clear viewing",
       basic: "Basic viewing",
-      passive: "Limited viewing",
+      passive: "Passive/limited viewing",
       unviewable: "Out of range"
     };
     const zoneColors = {
@@ -252,7 +252,7 @@ export default function InteractiveMap({ seats, room, zones, screenWidthM, scree
           const labels = {
             analytical: "Clear viewing",
             basic:      "Basic viewing",
-            passive:    "Limited viewing",
+            passive:    "Passive/limited viewing",
             unviewable: "Out of range",
           };
           return (

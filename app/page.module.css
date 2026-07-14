@@ -100,15 +100,14 @@
 .heroLeft {
   display: flex;
   align-items: center;
-  padding: 80px 64px 80px 80px;
+  padding: 80px 4rem 80px 2rem;
   background: #ffffff;
 }
 
 .heroContent {
   display: flex;
   flex-direction: column;
-  gap: 32px;
-  max-width: 520px;
+  gap: 20px;
 }
 
 .heroTextGroup {
@@ -164,14 +163,12 @@
   font-weight: 600;
   color: #2D3134;
   line-height: 1.5;
-  max-width: 520px;
 }
 
 .heroDesc {
-  font-size: 16px;
+  font-size: 15px;
   color: #4A4E51;
   line-height: 1.8;
-  max-width: 520px;
 }
 
 .heroList {

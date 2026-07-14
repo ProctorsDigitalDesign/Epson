@@ -161,7 +161,7 @@ export default function ReportDownload({ config, metrics, breakdown, projector, 
         const zoneData = [
           { key: "analytical", label: "Clear viewing", color: [34, 197, 94], desc: "Ideal for reading text & detail" },
           { key: "basic",      label: "Basic viewing",      color: [245, 158, 11],  desc: "Good for presentations" },
-          { key: "passive",    label: "Limited viewing",    color: [239, 68, 68], desc: "Suitable for video content only" },
+          { key: "passive",    label: "Passive/limited viewing",    color: [239, 68, 68], desc: "Suitable for video content only" },
           { key: "unviewable", label: "Out of range",       color: [229, 231, 235],  desc: "Too far for effective learning" },
         ];
 
@@ -221,7 +221,7 @@ export default function ReportDownload({ config, metrics, breakdown, projector, 
         "The 4/6/8 rule is the industry-standard framework for determining optimal display sizing in educational environments.",
         "• Clear viewing (×4): For reading fine text and detailed information. Distance ≤ 4× screen height.",
         "• Basic viewing (×6): For standard presentations and slideshows. Distance ≤ 6× screen height.",
-        "• Limited viewing (×8): Acceptable for video and movie content. Distance ≤ 8× screen height.",
+        "• Passive/limited viewing (×8): Acceptable for video and movie content. Distance ≤ 8× screen height.",
         "• Out of range (Beyond ×8): Considered out of range for effective educational purposes.",
       ];
 

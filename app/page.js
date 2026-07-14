@@ -153,18 +153,22 @@ export default function Home() {
               </h1>
 
               <div className={styles.heroTextGroup}>
-                <p className={styles.heroDesc}>
-                  This tool analyzes how your projector and seating choices impact student sightlines, engagement, and teacher mobility throughout the classroom.
+                <p className={styles.heroSubtitle}>
+                  See how your projector choice and classroom layout shape learning.
                 </p>
 
                 <p className={styles.heroDesc}>
-                  Easily visualize viewing comfort and classroom interaction from any seat, showing you how effective your setup will be.
+                  This tool helps you understand how the projector and seating layout you choose affect students' ability to see, read and engage with learning materials, as well as how easily a teacher can move around the room.
+                </p>
+
+                <p className={styles.heroDesc}>
+                  Use it to visualise viewing comfort and classroom interaction from any seat, giving you an instant picture of how effective your projector and layout will be.
                 </p>
 
                 <ul className={styles.heroList}>
-                  <li>Compare visibility across different projector choices and screen sizes.</li>
-                  <li>See how desk layouts affect sightlines and teacher movement.</li>
-                  <li>Instantly evaluate your classroom design's overall effectiveness.</li>
+                  <li>Compare how projector choice and screen size change what students see.</li>
+                  <li>Explore how desk arrangements affect visibility and teacher mobility.</li>
+                  <li>Get an instant visual check on the effectiveness of your classroom design.</li>
                 </ul>
               </div>
 
@@ -375,7 +379,7 @@ export default function Home() {
                         if (pct === 0) return null;
                         const label = zone === "analytical" ? "Clear viewing" :
                                       zone === "basic" ? "Basic viewing" :
-                                      zone === "passive" ? "Limited viewing" :
+                                      zone === "passive" ? "Passive/limited viewing" :
                                       "Out of range";
                         return (
                           <div
@@ -404,7 +408,7 @@ export default function Home() {
                       {[
                         { key: "analytical", label: "Clear viewing", color: "#22c55e" },
                         { key: "basic", label: "Basic viewing", color: "#f59e0b" },
-                        { key: "passive", label: "Limited viewing", color: "#ef4444" },
+                        { key: "passive", label: "Passive/limited viewing", color: "#ef4444" },
                         { key: "unviewable", label: "Out of range", color: "#e5e7eb" },
                       ].map(({ key, label, color }) => {
                         return (
