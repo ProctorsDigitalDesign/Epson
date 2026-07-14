@@ -107,16 +107,6 @@ export default function Home() {
   );
   const metrics = useMemo(() => calculateMetrics(seats), [seats]);
 
-  // Standard flat panel gets the same screen size, but we apply a 0.7x penalty to coverage 
-  // because Epson projectors have superior brightness, contrast, and off-angle viewing.
-  const fpdScreenH = screenH;
-  const fpdMultiplier = 0.7;
-  const fpdSeats = useMemo(
-    () => generateSeats(effectiveRoom, { cols: gridCalc.cols, rows: gridCalc.rows }, fpdScreenH, config.seatingLayout, targetSeats, 1.5, fpdMultiplier),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [effectiveRoom.width, effectiveRoom.depth, fpdScreenH, config.seatingLayout, gridCalc.cols, gridCalc.rows, targetSeats]
-  );
-  const fpdMetrics = useMemo(() => calculateMetrics(fpdSeats), [fpdSeats]);
 
   const bestSeat = seats.find((s) => s.isBestSeat);
   const worstSeat = seats.find((s) => s.isWorstSeat);
@@ -149,7 +139,7 @@ export default function Home() {
           STEP 1 — INTRODUCTION
       ══════════════════════════════════════════════════════ */}
       {step === 1 && (
-        <main className={styles.heroScreen}>
+        <main className={`${styles.heroScreen} animate-fade-in-up`}>
           {/* Left: Content */}
           <div className={styles.heroLeft}>
             <div className={styles.heroContent}>
@@ -159,29 +149,23 @@ export default function Home() {
               </div>
 
               <h1 className={styles.heroTitle}>
-                See Every Seat.
-                <span className={styles.heroTitleAccent}> Clearly.</span>
+                See every seat clearly
               </h1>
 
-              <p className={styles.heroDesc}>
-                Easily set up your ideal classroom and compare various projectors to see exactly what your students will experience. We use the trusted 4/6/8 viewing rule to help you find the perfect visibility for every seat.
-              </p>
+              <div className={styles.heroTextGroup}>
+                <p className={styles.heroDesc}>
+                  This tool analyzes how your projector and seating choices impact student sightlines, engagement, and teacher mobility throughout the classroom.
+                </p>
 
-              <div className={styles.heroStats}>
-                <div className={styles.heroStat}>
-                  <span className={styles.heroStatNumber}>4/6/8</span>
-                  <span className={styles.heroStatLabel}>Viewing Rule</span>
-                </div>
-                <div className={styles.heroStatDivider} />
-                <div className={styles.heroStat}>
-                  <span className={styles.heroStatNumber}>30s</span>
-                  <span className={styles.heroStatLabel}>Setup Time</span>
-                </div>
-                <div className={styles.heroStatDivider} />
-                <div className={styles.heroStat}>
-                  <span className={styles.heroStatNumber}>100%</span>
-                  <span className={styles.heroStatLabel}>Seat Coverage</span>
-                </div>
+                <p className={styles.heroDesc}>
+                  Easily visualize viewing comfort and classroom interaction from any seat, showing you how effective your setup will be.
+                </p>
+
+                <ul className={styles.heroList}>
+                  <li>Compare visibility across different projector choices and screen sizes.</li>
+                  <li>See how desk layouts affect sightlines and teacher movement.</li>
+                  <li>Instantly evaluate your classroom design's overall effectiveness.</li>
+                </ul>
               </div>
 
               <button
@@ -189,7 +173,7 @@ export default function Home() {
                 className={styles.heroBtn}
                 onClick={() => setStep(2)}
               >
-                Start Simulator
+                Start simulator
                 <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
                   <path d="M4 9h10M10 5l4 4-4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
@@ -197,11 +181,9 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Right: Pure animated gradient */}
+          {/* Right: Classroom Image */}
           <div className={styles.heroRight}>
-            <div className={styles.gradientOrb1} />
-            <div className={styles.gradientOrb2} />
-            <div className={styles.gradientOrb3} />
+            <img src="/classroom-context.png" alt="Classroom Context" className={styles.heroImage} />
             <div className={styles.heroGrid} />
           </div>
         </main>
@@ -212,7 +194,7 @@ export default function Home() {
           STEP 2 — CONFIGURATION
       ══════════════════════════════════════════════════════ */}
       {step === 2 && (
-        <main className={styles.configScreen}>
+        <main className={`${styles.configScreen} animate-fade-in-up`}>
           <div className="container">
             <div className={styles.configCard}>
               <div className={styles.configHeader}>
@@ -252,7 +234,7 @@ export default function Home() {
           STEP 3 — RESULTS
       ══════════════════════════════════════════════════════ */}
       {step === 3 && (
-        <main className={styles.resultsScreen} id="results">
+        <main className={`${styles.resultsScreen} animate-fade-in-up`} id="results">
           <div className="container">
             <div className={`${styles.warningWrapper} ${gridCalc.isMaxedOut ? styles.show : ''}`}>
               <div className={styles.warningInner}>
@@ -265,6 +247,13 @@ export default function Home() {
                   </span>
                 </div>
               </div>
+            </div>
+
+            <div style={{ padding: "0 0 24px" }}>
+              <h2 style={{ fontSize: "24px", fontWeight: "700", marginBottom: "8px", color: "var(--text-primary)" }}>Your results</h2>
+              <p style={{ fontSize: "15px", color: "var(--text-secondary)", lineHeight: "1.6", maxWidth: "800px" }}>
+                The diagram and data below show how effective your projector, screen and classroom layout choices are in promoting an inclusive education experience for all pupils.
+              </p>
             </div>
 
             {/* ── TOP BAR: Config summary + Edit button ── */}
@@ -298,31 +287,17 @@ export default function Home() {
             {/* ── SECTION 1: Map + Key Stats side-by-side ── */}
             <div className={styles.resultsMainRow}>
               {/* Classroom Maps */}
-              <div className={styles.mapComparison}>
-                <div className={styles.mapCard}>
-                  <div className={styles.cardLabel}>{projector?.name} ({config.screenSize}" Screen)</div>
-                  <InteractiveMap
-                    seats={seats}
-                    room={effectiveRoom}
-                    zones={zones}
-                    screenWidthM={screenW}
-                    screenHeightM={screenH}
-                    selectedSeatId={selectedSeatId}
-                    onSelectSeat={setSelectedSeatId}
-                  />
-                </div>
-                <div className={styles.mapCard}>
-                  <div className={styles.cardLabel}>Generic {config.screenSize}" Flat Panel Display</div>
-                  <InteractiveMap
-                    seats={fpdSeats}
-                    room={effectiveRoom}
-                    zones={getZoneDistances(fpdScreenH, fpdMultiplier)}
-                    screenWidthM={screenW}
-                    screenHeightM={fpdScreenH}
-                    selectedSeatId={selectedSeatId}
-                    onSelectSeat={setSelectedSeatId}
-                  />
-                </div>
+              <div className={styles.mapCard}>
+                <div className={styles.cardLabel}>{projector?.name} ({config.screenSize}" Screen)</div>
+                <InteractiveMap
+                  seats={seats}
+                  room={effectiveRoom}
+                  zones={zones}
+                  screenWidthM={screenW}
+                  screenHeightM={screenH}
+                  selectedSeatId={selectedSeatId}
+                  onSelectSeat={setSelectedSeatId}
+                />
               </div>
 
               {/* Key Metrics */}
@@ -347,7 +322,7 @@ export default function Home() {
                       inverse: true,
                     },
                     {
-                      label: "Equity Index",
+                      label: "Inclusion index",
                       desc: "Fairness of seat quality across the room",
                       value: metrics.equityIndex ?? 0,
                       suffix: "",
@@ -392,13 +367,16 @@ export default function Home() {
                           ? (count / metrics.breakdown.total) * 100
                           : 0;
                         const colors = {
-                          analytical: "#3A5A40",
-                          basic: "#A3B18A",
-                          passive: "#DDA15E",
-                          unviewable: "#9E9E9E",
+                          analytical: "#22c55e",
+                          basic: "#f59e0b",
+                          passive: "#ef4444",
+                          unviewable: "#e5e7eb",
                         };
                         if (pct === 0) return null;
-                        const label = zone === "unviewable" ? "Out of Range" : zone.charAt(0).toUpperCase() + zone.slice(1) + " Viewing";
+                        const label = zone === "analytical" ? "Clear viewing" :
+                                      zone === "basic" ? "Basic viewing" :
+                                      zone === "passive" ? "Limited viewing" :
+                                      "Out of range";
                         return (
                           <div
                             key={zone}
@@ -424,10 +402,10 @@ export default function Home() {
                     </div>
                     <div className={styles.zoneLegend}>
                       {[
-                        { key: "analytical", label: "Analytical Viewing", color: "#3A5A40" },
-                        { key: "basic", label: "Basic Viewing", color: "#A3B18A" },
-                        { key: "passive", label: "Passive Viewing", color: "#DDA15E" },
-                        { key: "unviewable", label: "Out of Range", color: "#9E9E9E" },
+                        { key: "analytical", label: "Clear viewing", color: "#22c55e" },
+                        { key: "basic", label: "Basic viewing", color: "#f59e0b" },
+                        { key: "passive", label: "Limited viewing", color: "#ef4444" },
+                        { key: "unviewable", label: "Out of range", color: "#e5e7eb" },
                       ].map(({ key, label, color }) => {
                         return (
                           <div key={key} className={styles.zoneLegendItem}>
@@ -458,6 +436,23 @@ export default function Home() {
                 screenWidthM={screenW}
                 screenHeightM={screenH}
               />
+            </div>
+
+            {/* ── SECTION 3: Final CTA ── */}
+            <div style={{ marginTop: "40px", padding: "32px 0", borderTop: "1px solid var(--border)", display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", width: "100%", gap: "24px", flexWrap: "wrap" }}>
+              <div>
+                <h3 style={{ fontSize: "16px", fontWeight: "700", marginBottom: "8px", color: "var(--text-primary)" }}>Discuss your classroom options with Epson</h3>
+                <p style={{ fontSize: "14px", color: "var(--text-secondary)", marginBottom: "8px" }}>Contact us today to speak to our education team.</p>
+                <a href="#" style={{ fontSize: "14px", fontWeight: "600", color: "var(--epson-blue)", textDecoration: "underline" }}>Contact Epson</a>
+              </div>
+
+              <button
+                className="btn btn-primary"
+                onClick={() => setStep(1)}
+                style={{ whiteSpace: "nowrap" }}
+              >
+                Take another assessment
+              </button>
             </div>
 
           </div>

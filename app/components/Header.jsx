@@ -4,7 +4,7 @@ import styles from "./Header.module.css";
 export default function Header({ step }) {
   return (
     <header className={`${styles.header} ${step === 1 ? styles.headerDark : ''}`}>
-      <div className="container">
+      <div className={step === 1 ? styles.containerHero : "container"}>
         <div className={styles.inner}>
           <div className={styles.logo}>
             <img

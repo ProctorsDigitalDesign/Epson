@@ -286,7 +286,13 @@ export function calculateOptimalGrid(targetSeats, roomWidth, roomDepth, layoutId
         const diff = seats - targetSeats;
         const ratio = c / r;
         const ratioDiff = Math.abs(ratio - targetRatio);
-        const score = diff * 100 + ratioDiff;
+        let symmetryPenalty = 0;
+        if (layoutId === "clusters") {
+          if (c % 3 !== 2) symmetryPenalty += 500; // Heavily penalize grids that split a cluster horizontally
+          if (r % 3 !== 2) symmetryPenalty += 50;  // Penalize grids that split a cluster vertically
+        }
+
+        const score = diff * 100 + ratioDiff + symmetryPenalty;
         
         if (!bestGrid || score < bestGrid.score) {
           bestGrid = { cols: c, rows: r, actualSeats: seats, isMaxedOut: false, score };

@@ -3,17 +3,17 @@ import React from 'react';
 import styles from "./POVViewer.module.css";
 
 const zoneColors = {
-  analytical: "#3A5A40",
-  basic: "#A3B18A",
-  passive: "#DDA15E",
-  unviewable: "#9E9E9E"
+  analytical: "#22c55e",
+  basic: "#f59e0b",
+  passive: "#ef4444",
+  unviewable: "#e5e7eb"
 };
 
 const zoneLabels = {
-  analytical: "Analytical Viewing",
-  basic: "Basic Viewing",
-  passive: "Passive Viewing",
-  unviewable: "Out of Range"
+  analytical: "Clear viewing",
+  basic: "Basic viewing",
+  passive: "Limited viewing",
+  unviewable: "Out of range"
 };
 
 export default function POVViewer({ bestSeat, worstSeat }) {

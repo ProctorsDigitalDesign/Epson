@@ -4,17 +4,17 @@ import styles from "./InteractiveMap.module.css";
 import { ZONE_META } from "../utils/calculations";
 
 const ZONE_COLORS = {
-  analytical: { fill: "rgba(26,122,74,0.45)", stroke: "rgba(26,122,74,0.9)" },
-  basic:      { fill: "rgba(37,99,181,0.35)", stroke: "rgba(37,99,181,0.8)" },
-  passive:    { fill: "rgba(196,124,18,0.25)", stroke: "rgba(196,124,18,0.7)" },
-  unviewable: { fill: "rgba(100,20,20,0.2)", stroke: "rgba(139,26,26,0.5)" },
+  analytical: { fill: "rgba(34,197,94,0.15)", stroke: "#22c55e" },
+  basic:      { fill: "rgba(245,158,11,0.15)", stroke: "#f59e0b" },
+  passive:    { fill: "rgba(239,68,68,0.15)", stroke: "#ef4444" },
+  unviewable: { fill: "transparent", stroke: "#e5e7eb" },
 };
 
 const SEAT_ZONE_COLORS = {
-  analytical: "#3A5A40",  // dark green
-  basic:      "#A3B18A",  // light green
-  passive:    "#DDA15E",  // orange
-  unviewable: "#9E9E9E",  // grey
+  analytical: "#22c55e",  // Green
+  basic:      "#f59e0b",  // Amber
+  passive:    "#ef4444",  // Red
+  unviewable: "#e5e7eb",  // Uncoloured (light grey)
 };
 
 export default function InteractiveMap({ seats, room, zones, screenWidthM, screenHeightM, selectedSeatId, onSelectSeat }) {
@@ -37,10 +37,10 @@ export default function InteractiveMap({ seats, room, zones, screenWidthM, scree
 
   // Organic Architectural Colors
   const ARCH_COLORS = {
-    analytical: { fill: "rgba(58, 90, 64, 0.45)", stroke: "#3A5A40" },
-    basic:      { fill: "rgba(163, 177, 138, 0.45)", stroke: "#A3B18A" },
-    passive:    { fill: "rgba(221, 161, 94, 0.45)", stroke: "#DDA15E" },
-    unviewable: { fill: "rgba(158, 158, 158, 0.25)", stroke: "#9E9E9E" },
+    analytical: { fill: "rgba(34,197,94,0.15)", stroke: "#22c55e" }, // Green
+    basic:      { fill: "rgba(245,158,11,0.15)", stroke: "#f59e0b" }, // Amber
+    passive:    { fill: "rgba(239,68,68,0.15)", stroke: "#ef4444" },  // Red
+    unviewable: { fill: "transparent", stroke: "#e5e7eb" },           // Uncoloured
   };
 
   const depthToRadius = (depthM) => (depthM / room.depth) * MAP_H;
@@ -62,16 +62,16 @@ export default function InteractiveMap({ seats, room, zones, screenWidthM, scree
       unviewable: "Student cannot effectively see the screen. High risk of disengagement."
     };
     const zoneLabels = {
-      analytical: "Analytical Viewing",
-      basic: "Basic Viewing",
-      passive: "Passive Viewing",
-      unviewable: "Out of Range"
+      analytical: "Clear viewing",
+      basic: "Basic viewing",
+      passive: "Limited viewing",
+      unviewable: "Out of range"
     };
     const zoneColors = {
-      analytical: "#3A5A40",
-      basic:      "#A3B18A",
-      passive:    "#DDA15E",
-      unviewable: "#9E9E9E"
+      analytical: "#22c55e",
+      basic:      "#f59e0b",
+      passive:    "#ef4444",
+      unviewable: "#e5e7eb"
     };
 
     return (
@@ -244,16 +244,16 @@ export default function InteractiveMap({ seats, room, zones, screenWidthM, scree
       <div className={styles.legend}>
         {Object.entries(ZONE_META).map(([key]) => {
           const colors = {
-            analytical: "#3A5A40",
-            basic:      "#A3B18A",
-            passive:    "#DDA15E",
-            unviewable: "#9E9E9E",
+            analytical: "#22c55e",
+            basic:      "#f59e0b",
+            passive:    "#ef4444",
+            unviewable: "#e5e7eb",
           };
           const labels = {
-            analytical: "Analytical Viewing",
-            basic:      "Basic Viewing",
-            passive:    "Passive Viewing",
-            unviewable: "Out of Range",
+            analytical: "Clear viewing",
+            basic:      "Basic viewing",
+            passive:    "Limited viewing",
+            unviewable: "Out of range",
           };
           return (
             <div key={key} className={styles.legendItem}>

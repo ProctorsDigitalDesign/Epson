@@ -141,10 +141,10 @@ export default function InsightsDashboard({ metrics, breakdown }) {
               const count = breakdown[zone] ?? 0;
               const pct = breakdown.total > 0 ? (count / breakdown.total) * 100 : 0;
               const zoneColors = {
-                analytical: { bg: "#3A5A40", label: "Analytical Viewing" },
-                basic: { bg: "#A3B18A", label: "Basic Viewing" },
-                passive: { bg: "#DDA15E", label: "Passive Viewing" },
-                unviewable: { bg: "#9E9E9E", label: "Out of Range" },
+                analytical: { bg: "#22c55e", label: "Clear viewing" },
+                basic: { bg: "#f59e0b", label: "Basic viewing" },
+                passive: { bg: "#ef4444", label: "Limited viewing" },
+                unviewable: { bg: "#e5e7eb", label: "Out of range" },
               };
               if (pct === 0) return null;
               return (
@@ -162,10 +162,10 @@ export default function InsightsDashboard({ metrics, breakdown }) {
               const count = breakdown[zone] ?? 0;
               const pct = breakdown.total > 0 ? Math.round((count / breakdown.total) * 100) : 0;
               const zoneColors = {
-                analytical: { bg: "#3A5A40", label: "Analytical Viewing" },
-                basic: { bg: "#A3B18A", label: "Basic Viewing" },
-                passive: { bg: "#DDA15E", label: "Passive Viewing" },
-                unviewable: { bg: "#9E9E9E", label: "Out of Range" },
+                analytical: { bg: "#22c55e", label: "Clear viewing" },
+                basic: { bg: "#f59e0b", label: "Basic viewing" },
+                passive: { bg: "#ef4444", label: "Limited viewing" },
+                unviewable: { bg: "#e5e7eb", label: "Out of range" },
               };
               return (
                 <div key={zone} className={styles.breakdownLegendItem}>
