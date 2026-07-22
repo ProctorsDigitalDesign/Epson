@@ -284,7 +284,7 @@ export default function Home() {
                 onClick={() => setIsEditingConfig(!isEditingConfig)}
                 style={{ fontSize: 13, padding: "8px 18px" }}
               >
-                {isEditingConfig ? 'Close Configuration' : 'Edit Configuration'}
+                {isEditingConfig ? 'Close Configuration' : 'Edit configuration'}
               </button>
             </div>
 
@@ -313,7 +313,7 @@ export default function Home() {
                 },
                 {
                   id: "flatpanel",
-                  title: "Standard Flat Panel",
+                  title: "Standard flat panel",
                   subtitle: `(86" Screen)`,
                   screenW: fpScreenW,
                   screenH: fpScreenH,
@@ -355,7 +355,7 @@ export default function Home() {
                     <div className={styles.statsList}>
                       {[
                         {
-                          label: "Visibility Coverage",
+                          label: "Visibility coverage",
                           desc: "Seats with a clear or basic view of the screen",
                           value: res.metrics.visibilityCoverage ?? 0,
                           suffix: "%",
@@ -363,7 +363,7 @@ export default function Home() {
                           tooltip: `${res.metrics.breakdown.analytical + res.metrics.breakdown.basic} out of ${res.metrics.breakdown.total} seats covered`,
                         },
                         {
-                          label: "Engagement Risk",
+                          label: "Engagement risk",
                           desc: "Seats where learning may be compromised",
                           value: res.metrics.engagementRisk ?? 0,
                           suffix: "%",
@@ -427,7 +427,7 @@ export default function Home() {
                     {/* Zone breakdown */}
                     {res.metrics.breakdown && (
                       <div className={styles.zoneBreakdown}>
-                        <div className={styles.cardLabel} style={{ marginBottom: 12 }}>Seat Zone Breakdown</div>
+                        <div className={styles.cardLabel} style={{ marginBottom: 12 }}>Seat zone breakdown</div>
                         <div className={styles.zoneBar}>
                           {["analytical", "basic", "passive", "unviewable"].map((zone) => {
                             const count = res.metrics.breakdown[zone] ?? 0;

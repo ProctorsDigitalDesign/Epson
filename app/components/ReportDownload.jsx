@@ -60,7 +60,7 @@ export default function ReportDownload({ config, metrics, breakdown, projector, 
 
       const configRows = [
         ["Room Size", room ? `${room.label} (${room.width}m × ${room.depth}m)` : "None"],
-        ["Projector Model", projector ? `${projector.name} (${projector.subtitle})` : "None"],
+        ["Projector model", projector ? `${projector.name} (${projector.subtitle})` : "None"],
         ["Screen Size", `${config.screenSize}" diagonal`],
         ["Projector Brightness", projector ? `${projector.lumens.toLocaleString()} lumens` : "None"],
         ["Projector Resolution", projector?.resolution ?? "None"],
@@ -95,14 +95,14 @@ export default function ReportDownload({ config, metrics, breakdown, projector, 
       const metricDefs = [
         {
           key: "visibilityCoverage",
-          label: "Visibility Coverage",
+          label: "Visibility coverage",
           suffix: "%",
           desc: "Seats with a clear, usable view of the screen",
           color: metrics?.visibilityCoverage >= 80 ? [26, 122, 74] : metrics?.visibilityCoverage >= 60 ? [196, 124, 18] : [139, 26, 26],
         },
         {
           key: "engagementRisk",
-          label: "Engagement Risk",
+          label: "Engagement risk",
           suffix: "%",
           desc: "Seats where visibility is compromised",
           color: metrics?.engagementRisk <= 20 ? [26, 122, 74] : metrics?.engagementRisk <= 40 ? [196, 124, 18] : [139, 26, 26],
@@ -153,7 +153,7 @@ export default function ReportDownload({ config, metrics, breakdown, projector, 
         doc.setFontSize(11);
         doc.setFont("helvetica", "bold");
         doc.setTextColor(0, 65, 172);
-        doc.text("Seat Zone Breakdown", margin, y);
+        doc.text("Seat zone breakdown", margin, y);
         y += 5;
         line(margin, y, pageW - margin, y, [0, 163, 224]);
         y += 7;

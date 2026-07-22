@@ -75,7 +75,7 @@ export default function SimulatorSetup({ config, onChange }) {
       <div className={styles.row}>
         <div className={styles.field}>
           <label className={styles.label} htmlFor="schoolName">
-            School Name (for report)
+            School name (for report)
           </label>
           <input
             id="schoolName"
@@ -89,7 +89,7 @@ export default function SimulatorSetup({ config, onChange }) {
 
         <div className={styles.field}>
           <label className={styles.label} htmlFor="classroomSize">
-            Classroom Size
+            Classroom size
           </label>
           <div className={styles.selectWrapper}>
             <select
@@ -117,7 +117,7 @@ export default function SimulatorSetup({ config, onChange }) {
       <div className={styles.row}>
         <div className={styles.field}>
           <label className={styles.label} htmlFor="projectorModel">
-            Projector Model
+            Projector model
           </label>
           <div className={styles.selectWrapper}>
             <select
@@ -164,7 +164,7 @@ export default function SimulatorSetup({ config, onChange }) {
         </div>
         <div className={styles.field}>
           <label className={styles.label} htmlFor="screenSize">
-            Screen / Display Size
+            Screen / Display size
           </label>
           <div className={styles.rangeWrapper}>
             <input
@@ -191,7 +191,7 @@ export default function SimulatorSetup({ config, onChange }) {
       <div className={styles.row}>
         <div className={styles.field}>
           <label className={styles.label} htmlFor="seatingLayout">
-            Seating Layout
+            Seating layout
           </label>
           <div className={styles.selectWrapper}>
             <select
@@ -213,7 +213,7 @@ export default function SimulatorSetup({ config, onChange }) {
         </div>
         <div className={styles.field}>
           <label className={styles.label} htmlFor="targetSeats">
-            Target Number of Seats (Max: {maxPossibleSeats})
+            Target number of seats (Max: {maxPossibleSeats})
           </label>
           <div className={styles.numberInputWrapper}>
             <input

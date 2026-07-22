@@ -59,7 +59,7 @@ function ProgressRing({ value, color, size = 100, strokeWidth = 8 }) {
 
 const METRIC_CONFIG = {
   visibilityCoverage: {
-    label: "Visibility Coverage",
+    label: "Visibility coverage",
     desc: "Seats where the screen is clearly viewable",
     icon: "👁️",
     goodThreshold: 80,
@@ -68,7 +68,7 @@ const METRIC_CONFIG = {
     inverse: false,
   },
   engagementRisk: {
-    label: "Engagement Risk",
+    label: "Engagement risk",
     desc: "Seats where learning may be compromised",
     icon: "⚠️",
     goodThreshold: 20,
@@ -135,7 +135,7 @@ export default function InsightsDashboard({ metrics, breakdown }) {
       {/* Breakdown bar */}
       {breakdown && (
         <div className={`glass-card ${styles.breakdown}`}>
-          <div className={styles.breakdownTitle}>Seat Zone Breakdown</div>
+          <div className={styles.breakdownTitle}>Seat zone breakdown</div>
           <div className={styles.breakdownBar}>
             {["analytical", "basic", "passive", "unviewable"].map((zone) => {
               const count = breakdown[zone] ?? 0;
