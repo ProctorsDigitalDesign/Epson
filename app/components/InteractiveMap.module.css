@@ -37,9 +37,6 @@
 
 .mapContainer {
   width: 100%;
-  border-radius: var(--radius-sm);
-  border: 1px solid #D0C9B2;
-  background: #FAF8F2;
   position: relative;
 }
 

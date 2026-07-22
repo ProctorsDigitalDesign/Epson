@@ -7,21 +7,21 @@ const ZONE_COLORS = {
   analytical: { fill: "rgba(34,197,94,0.15)", stroke: "#22c55e" },
   basic:      { fill: "rgba(245,158,11,0.15)", stroke: "#f59e0b" },
   passive:    { fill: "rgba(239,68,68,0.15)", stroke: "#ef4444" },
-  unviewable: { fill: "transparent", stroke: "#e5e7eb" },
+  unviewable: { fill: "transparent", stroke: "#9ca3af" },
 };
 
 const SEAT_ZONE_COLORS = {
   analytical: "#22c55e",  // Green
   basic:      "#f59e0b",  // Amber
   passive:    "#ef4444",  // Red
-  unviewable: "#e5e7eb",  // Uncoloured (light grey)
+  unviewable: "#9ca3af",  // Uncoloured (light grey)
 };
 
-export default function InteractiveMap({ seats, room, zones, screenWidthM, screenHeightM, selectedSeatId, onSelectSeat }) {
+export default function InteractiveMap({ seats, room, zones, screenWidthM, screenHeightM, displaySizeInches, selectedSeatId, onSelectSeat }) {
   const [hoveredSeatId, setHoveredSeatId] = useState(null);
   const SVG_W = 600;
   const SVG_H = 450;
-  const PADDING = { top: 48, left: 32, right: 32, bottom: 24 };
+  const PADDING = { top: 32, left: 32, right: 32, bottom: 24 };
   const MAP_W = SVG_W - PADDING.left - PADDING.right;
   const MAP_H = SVG_H - PADDING.top - PADDING.bottom;
 
@@ -31,19 +31,14 @@ export default function InteractiveMap({ seats, room, zones, screenWidthM, scree
 
   // Screen horizontal centre
   const screenCX = SVG_W / 2;
-  const screenCY = PADDING.top - 4;
+  const screenCY = PADDING.top;
 
-  const zoneOrder = ["passive", "basic", "analytical"];
-
-  // Organic Architectural Colors
   const ARCH_COLORS = {
-    analytical: { fill: "rgba(34,197,94,0.15)", stroke: "#22c55e" }, // Green
-    basic:      { fill: "rgba(245,158,11,0.15)", stroke: "#f59e0b" }, // Amber
-    passive:    { fill: "rgba(239,68,68,0.15)", stroke: "#ef4444" },  // Red
-    unviewable: { fill: "transparent", stroke: "#e5e7eb" },           // Uncoloured
+    analytical: { fill: "rgba(34,197,94,0.15)", stroke: "#22c55e" },
+    basic:      { fill: "rgba(245,158,11,0.15)", stroke: "#f59e0b" },
+    passive:    { fill: "rgba(239,68,68,0.15)", stroke: "#ef4444" },
+    unviewable: { fill: "transparent", stroke: "#9ca3af" },
   };
-
-  const depthToRadius = (depthM) => (depthM / room.depth) * MAP_H;
 
   const renderTooltip = () => {
     if (!hoveredSeatId) return null;
@@ -71,7 +66,7 @@ export default function InteractiveMap({ seats, room, zones, screenWidthM, scree
       analytical: "#22c55e",
       basic:      "#f59e0b",
       passive:    "#ef4444",
-      unviewable: "#e5e7eb"
+      unviewable: "#9ca3af"
     };
 
     return (
@@ -116,8 +111,7 @@ export default function InteractiveMap({ seats, room, zones, screenWidthM, scree
             </clipPath>
           </defs>
 
-          {/* Background Card Area */}
-          <rect x="0" y="0" width={SVG_W} height={SVG_H} fill="#FAF8F2" rx="4" />
+          {/* Background Card Area Removed */}
 
           {/* Room floor with wood plank pattern */}
           <rect
@@ -129,59 +123,46 @@ export default function InteractiveMap({ seats, room, zones, screenWidthM, scree
             rx="4"
           />
 
-          {/* Zone fills (drawn back-to-front) */}
-          {zones && zoneOrder.map((key) => {
-            const dist = zones[key];
-            if (!dist) return null;
-            const r = depthToRadius(dist);
-            return (
-              <ellipse
-                key={key}
-                cx={screenCX}
-                cy={screenCY}
-                rx={Math.min(r * 1.4, MAP_W * 0.9)}
-                ry={r}
-                fill={ARCH_COLORS[key].fill}
-                stroke={ARCH_COLORS[key].stroke}
-                strokeWidth="1.2"
-                clipPath="url(#mapClip)"
-              />
-            );
-          })}
+          {/* Zone fills (drawn back-to-front as arches) */}
+          {zones && (() => {
+            const zoneKeys = ["passive", "basic", "analytical"];
+            return zoneKeys.map((key) => {
+              const dist = zones[key];
+              if (!dist) return null;
+              
+              // Map physical radius (dist) to SVG coordinates
+              const rx = (dist / room.width) * MAP_W;
+              const ry = (dist / room.depth) * MAP_H;
+              
+              return (
+                <ellipse
+                  key={key}
+                  cx={screenCX}
+                  cy={screenCY}
+                  rx={rx}
+                  ry={ry}
+                  fill={ARCH_COLORS[key].fill}
+                  stroke={ARCH_COLORS[key].stroke}
+                  strokeWidth="1.2"
+                  clipPath="url(#mapClip)"
+                />
+              );
+            });
+          })()}
 
-          {/* Zone distance labels */}
-          {zones && Object.entries(zones).map(([key, dist]) => {
-            const r = depthToRadius(dist);
-            if (r > MAP_H) return null;
-            const labelY = screenCY + r;
-            if (labelY > PADDING.top + MAP_H - 10) return null;
-            return (
-              <text
-                key={`label-${key}`}
-                x={PADDING.left + 8}
-                y={labelY - 4}
-                fontSize="9"
-                fill="#8A826B"
-                fontFamily="var(--font-body)"
-                fontWeight="500"
-              >
-                {dist.toFixed(1)}m
-              </text>
-            );
-          })}
-
-          {/* Screen wall (solid dark bar) */}
+          {/* Screen wall (solid dark bar sitting on top edge of floor) */}
           <rect
             x={screenCX - (screenWidthM / room.width) * MAP_W * 0.5}
-            y={PADDING.top - 5}
+            y={PADDING.top - 6}
             width={(screenWidthM / room.width) * MAP_W}
-            height={5}
+            height={6}
             fill="#3d5243"
             rx="1.5"
           />
+          {/* SCREEN TEXT OUTSIDE ROOM */}
           <text x={screenCX} y={PADDING.top - 12} textAnchor="middle"
-            fontSize="10" fill="#4A6050" fontFamily="var(--font-display)" fontWeight="700" letterSpacing="0.05em">
-            SCREEN ({Math.round(screenWidthM * 100)}cm wide)
+            fontSize="9" fill="#4A6050" fontFamily="var(--font-display)" fontWeight="700" letterSpacing="0.05em">
+            Screen ({displaySizeInches}")
           </text>
 
           {/* Seats */}
@@ -224,15 +205,17 @@ export default function InteractiveMap({ seats, room, zones, screenWidthM, scree
             );
           })}
 
-          {/* Dimension labels */}
+          {/* Dimension labels outside room floor boundary without any wrapping capsules */}
+          {/* Bottom width label */}
           <text x={screenCX} y={SVG_H - 8} textAnchor="middle"
-            fontSize="10" fill="#8A826B" fontFamily="var(--font-body)">
+            fontSize="9" fill="#8A826B" fontFamily="var(--font-body)" fontWeight="600">
             {room.width}m wide
           </text>
+          {/* Left depth label */}
           <text
             transform={`translate(${PADDING.left - 10}, ${PADDING.top + MAP_H / 2}) rotate(-90)`}
             textAnchor="middle"
-            fontSize="10" fill="#8A826B" fontFamily="var(--font-body)">
+            fontSize="9" fill="#8A826B" fontFamily="var(--font-body)" fontWeight="600">
             {room.depth}m deep
           </text>
         </svg>
@@ -247,7 +230,7 @@ export default function InteractiveMap({ seats, room, zones, screenWidthM, scree
             analytical: "#22c55e",
             basic:      "#f59e0b",
             passive:    "#ef4444",
-            unviewable: "#e5e7eb",
+            unviewable: "#9ca3af",
           };
           const labels = {
             analytical: "Clear viewing",

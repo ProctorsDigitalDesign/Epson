@@ -127,8 +127,7 @@
   font-size: 11px;
   font-weight: 700;
   color: #10218B;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   width: fit-content;
 }
 
@@ -222,7 +221,6 @@
   font-size: 11px;
   color: #90949C;
   font-weight: 500;
-  text-transform: uppercase;
   letter-spacing: 0.06em;
 }
 
@@ -396,9 +394,9 @@
 .heroVisualLabel {
   font-size: 11px;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.35);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
+  color: var(--text-secondary);
+  font-weight: 700;
+  letter-spacing: 0.04em;
 }
 
 
@@ -541,10 +539,18 @@
 .cardLabel {
   font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
   color: var(--text-muted);
   margin-bottom: 16px;
+}
+
+.visibilityHeader {
+  margin-bottom: 12px;
+}
+
+.cardSublabel {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
 }
 
 /* ── Meta bar ── */
@@ -657,19 +663,16 @@
 }
 
 .statRow {
-  padding: 14px 0;
-  border-bottom: 1px solid var(--border);
-}
-
-.statRow:last-child {
-  border-bottom: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 0;
 }
 
 .statMeta {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  margin-bottom: 6px;
 }
 
 .statLabel {
@@ -689,7 +692,6 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 8px;
 }
 
 .statValue {
@@ -703,24 +705,22 @@
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.05em;
-  text-transform: uppercase;
-  padding: 3px 8px;
-  border-radius: 2px;
+}
+
+.badge_excellent {
+  color: #14532d; /* dark green */
 }
 
 .badge_good {
-  background: #e6eee8;
-  color: #3A5A40;
+  color: #10b981; /* light green */
 }
 
-.badge_fair {
-  background: #fdf6ef;
-  color: #DDA15E;
+.badge_medium {
+  color: #f59e0b; /* orange */
 }
 
 .badge_poor {
-  background: #f5f5f5;
-  color: #9E9E9E;
+  color: #ef4444; /* red */
 }
 
 .statBar {
@@ -736,14 +736,14 @@
   transition: width 0.6s ease;
 }
 
-.fill_good { background: #3A5A40; }
-.fill_fair { background: #DDA15E; }
-.fill_poor { background: #9E9E9E; }
+.fill_excellent { background: #14532d; }
+.fill_good { background: #10b981; }
+.fill_medium { background: #f59e0b; }
+.fill_poor { background: #ef4444; }
 
 /* ── Zone breakdown ── */
 .zoneBreakdown {
-  border-top: 1px solid var(--border);
-  padding-top: 20px;
+  padding-top: 8px;
 }
 
 .zoneBar {
@@ -848,6 +848,17 @@
    FOOTER
    ============================================================ */
 
+.modalContent {
+  background-color: #fff;
+  border-radius: 12px;
+  max-width: 480px;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+  padding: 2.5rem;
+}
+
 .footer {
   padding: 28px 0;
   background: var(--white);
@@ -950,6 +961,10 @@
   .footerInner {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .modalContent {
+    padding: 1.5rem;
   }
 }
 

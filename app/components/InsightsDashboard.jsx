@@ -144,7 +144,7 @@ export default function InsightsDashboard({ metrics, breakdown }) {
                 analytical: { bg: "#22c55e", label: "Clear viewing" },
                 basic: { bg: "#f59e0b", label: "Basic viewing" },
                 passive: { bg: "#ef4444", label: "Passive/limited viewing" },
-                unviewable: { bg: "#e5e7eb", label: "Out of range" },
+                unviewable: { bg: "#9ca3af", label: "Out of range" },
               };
               if (pct === 0) return null;
               return (
@@ -165,7 +165,7 @@ export default function InsightsDashboard({ metrics, breakdown }) {
                 analytical: { bg: "#22c55e", label: "Clear viewing" },
                 basic: { bg: "#f59e0b", label: "Basic viewing" },
                 passive: { bg: "#ef4444", label: "Passive/limited viewing" },
-                unviewable: { bg: "#e5e7eb", label: "Out of range" },
+                unviewable: { bg: "#9ca3af", label: "Out of range" },
               };
               return (
                 <div key={zone} className={styles.breakdownLegendItem}>

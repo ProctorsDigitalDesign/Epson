@@ -15,6 +15,14 @@ export const ZONE_MULTIPLIERS = {
   passive: 8,
 };
 
+export const LAYOUT_CONFIG = {
+  SPACING: 1.2,          // 1.2m center-to-center desk spacing
+  SIDE_MARGIN: 0.8,      // Room side margin
+  BACK_MARGIN: 1.0,      // Room back margin
+  THEATRE_AISLE: 0.8,    // Central aisle width for theatre style
+  PAIRS_AISLE: 0.6       // Aisle width for pairs style
+};
+
 export const ZONE_META = {
   analytical: {
     label: "Analytical Zone",
@@ -60,6 +68,18 @@ export function screenDiagToMetres(diagonalInches, aspectRatio = "16:9") {
 }
 
 /**
+ * Reverse-calculate the diagonal size (inches) from a given physical width (metres).
+ * aspectRatio should be a string like "16:9" or "4:3"
+ */
+export function screenMetresToDiagInches(widthMetres, aspectRatio = "16:9") {
+  const [w, h] = aspectRatio.split(":").map(Number);
+  const aspectDecimal = w / h;
+  const height = widthMetres / aspectDecimal;
+  const diagMetres = Math.sqrt(widthMetres * widthMetres + height * height);
+  return Math.floor(diagMetres / 0.0254);
+}
+
+/**
  * Given a screen height (metres), return the max distances for each zone.
  */
 export function getZoneDistances(screenHeightM, multiplier = 1.0) {
@@ -98,32 +118,29 @@ export function generateSeats(room, seats, screenH, layoutId = "rows", targetSea
 
   const result = [];
 
-  outerLoop:
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
-      if (targetSeats !== null && result.length >= targetSeats) {
-        break outerLoop;
-      }
+      let x = c * LAYOUT_CONFIG.SPACING; // un-centered base x
+      let y = frontMargin + r * LAYOUT_CONFIG.SPACING; // metres from screen wall
+      let skip = false;
 
-      // Apply layout exclusions
+      // Apply layout exclusions and gap injections
       if (layoutId === "ushape") {
         const wingSize = Math.floor(cols / 3) || 1;
         const isMiddleCol = c >= wingSize && c <= cols - 1 - wingSize;
         const isFrontOrMiddleRow = r < rows - 1;
-        if (isMiddleCol && isFrontOrMiddleRow) continue;
-      } else if (layoutId === "clusters") {
-        const isAisleCol = c % 3 === 2;
-        const isAisleRow = r % 3 === 2;
-        if (isAisleCol || isAisleRow) continue;
+        if (isMiddleCol && isFrontOrMiddleRow) skip = true;
+      } else if (layoutId === "pairs") {
+        const pairIndex = Math.floor(c / 2);
+        x += pairIndex * LAYOUT_CONFIG.PAIRS_AISLE;
       } else if (layoutId === "theatre") {
-        const isCenterAisle = cols % 2 === 0 ? (c === cols/2 || c === cols/2 - 1) : (c === Math.floor(cols/2));
-        if (isCenterAisle) continue;
+        const half = Math.floor(cols / 2);
+        if (cols > 1 && c >= half) {
+          x += LAYOUT_CONFIG.THEATRE_AISLE;
+        }
       }
 
-      const x = c * 0.9; // temp un-centered x
-      const y = frontMargin + r * 0.9; // metres from screen wall
-
-      const distanceFromScreen = y;
+      if (skip) continue;
 
       result.push({
         id: `seat-${r}-${c}`,
@@ -131,8 +148,30 @@ export function generateSeats(room, seats, screenH, layoutId = "rows", targetSea
         row: r,
         x,
         y,
-        distanceFromScreen,
       });
+    }
+  }
+
+  // Symmetrically prune excess seats from the back rows
+  if (targetSeats !== null && result.length > targetSeats) {
+    const centerCol = (cols - 1) / 2;
+    while (result.length > targetSeats) {
+      // Find the back-most row that still has seats
+      const maxRow = Math.max(...result.map(s => s.row));
+      const backRowIndices = result
+        .map((s, idx) => ({ s, idx }))
+        .filter(item => item.s.row === maxRow);
+
+      // Sort back-row seats by distance from the center column descending (outermost first)
+      backRowIndices.sort((a, b) => {
+        const distA = Math.abs(a.s.col - centerCol);
+        const distB = Math.abs(b.s.col - centerCol);
+        return distB - distA; // Descending
+      });
+
+      // Remove the outermost seat from result
+      const targetIndex = backRowIndices[0].idx;
+      result.splice(targetIndex, 1);
     }
   }
 
@@ -145,25 +184,29 @@ export function generateSeats(room, seats, screenH, layoutId = "rows", targetSea
 
     result.forEach(s => {
       s.x = startX + (s.x - minX);
-      
+      // Calculate radial distance from screen center (width/2, 0)
+      s.distanceFromScreen = Math.sqrt(
+        Math.pow(s.x - width / 2, 2) + Math.pow(s.y, 2)
+      );
+
       const normalX = s.x / width;
       const normalY = s.y / depth;
       
       s.x = normalX;
       s.y = normalY;
       s.zone = classifyDistance(s.distanceFromScreen, screenH, multiplier);
-      s.isWorstSeat = false;
       s.isBestSeat = false;
+      s.isFurthestSeat = false;
     });
 
-    // Recompute worst seats (back corners)
+    // Recompute furthest seats (back corners)
     const maxRow = Math.max(...result.map(s => s.row));
     const backRowSeats = result.filter(s => s.row === maxRow);
     if (backRowSeats.length > 0) {
       const minCol = Math.min(...backRowSeats.map(s => s.col));
       const maxCol = Math.max(...backRowSeats.map(s => s.col));
       backRowSeats.forEach(s => {
-        if (s.col === minCol || s.col === maxCol) s.isWorstSeat = true;
+        if (s.col === minCol || s.col === maxCol) s.isFurthestSeat = true;
       });
     }
 
@@ -201,7 +244,7 @@ export function calculateMetrics(seats) {
   const unviewable = seats.filter((s) => s.zone === "unviewable").length;
 
   // Visibility Coverage: % of seats that are at least "basic" (can see a presentation)
-  const visibilityCoverage = Math.round(((total - unviewable) / total) * 100);
+  const visibilityCoverage = Math.round(((analytical + basic) / total) * 100);
 
   // Engagement Risk: % of seats where students struggle (passive + unviewable)
   const engagementRisk = Math.round(((passive + unviewable) / total) * 100);
@@ -240,11 +283,27 @@ export function calcScreenWidthAtDistance(throwRatio, throwDistanceM) {
  * within the physical dimensions of the room.
  */
 export function calculateOptimalGrid(targetSeats, roomWidth, roomDepth, layoutId, frontMargin = 1.5) {
-  const SPACING = 0.9;
-  const SIDE_MARGIN = 0.8;
-  const BACK_MARGIN = 1.0;
+  const { SPACING, SIDE_MARGIN, BACK_MARGIN, THEATRE_AISLE, PAIRS_AISLE } = LAYOUT_CONFIG;
 
-  const maxCols = Math.max(1, Math.floor((roomWidth - 2 * SIDE_MARGIN) / SPACING) + 1);
+  // Iteratively determine how many columns can physically fit given real aisle widths
+  let maxCols = 1;
+  while(true) {
+    const testCols = maxCols + 1;
+    let max_x = (testCols - 1) * SPACING;
+    
+    if (layoutId === "theatre" && testCols > 1) {
+      max_x += THEATRE_AISLE;
+    } else if (layoutId === "pairs") {
+      const pairIndex = Math.floor((testCols - 1) / 2);
+      max_x += pairIndex * PAIRS_AISLE;
+    }
+
+    if (max_x > roomWidth - 2 * SIDE_MARGIN) {
+      break; // Doesn't fit
+    }
+    maxCols = testCols;
+  }
+
   const maxRows = Math.max(1, Math.floor((roomDepth - frontMargin - BACK_MARGIN) / SPACING) + 1);
 
   const countSeats = (cols, rows) => {
@@ -256,13 +315,6 @@ export function calculateOptimalGrid(targetSeats, roomWidth, roomDepth, layoutId
           const isMiddleCol = c >= wingSize && c <= cols - 1 - wingSize;
           const isFrontOrMiddleRow = r < rows - 1;
           if (isMiddleCol && isFrontOrMiddleRow) continue;
-        } else if (layoutId === "clusters") {
-          const isAisleCol = c % 3 === 2;
-          const isAisleRow = r % 3 === 2;
-          if (isAisleCol || isAisleRow) continue;
-        } else if (layoutId === "theatre") {
-          const isCenterAisle = cols % 2 === 0 ? (c === cols/2 || c === cols/2 - 1) : (c === Math.floor(cols/2));
-          if (isCenterAisle) continue;
         }
         count++;
       }
@@ -270,30 +322,31 @@ export function calculateOptimalGrid(targetSeats, roomWidth, roomDepth, layoutId
     return count;
   };
 
-  let bestGrid = null;
   const maxPossibleSeats = countSeats(maxCols, maxRows);
 
   if (targetSeats > maxPossibleSeats) {
     return { cols: maxCols, rows: maxRows, actualSeats: maxPossibleSeats, isMaxedOut: true };
   }
 
-  const targetRatio = roomWidth / roomDepth;
-  
+  // Fill column-first: real classrooms are wide & shallow. 
+  // We iterate rows (outer) and cols (inner) but we SCORE grids that
+  // maximise cols relative to rows — i.e. fill the width of the room before
+  // adding depth. We also want minimal wastage (extra seats beyond target).
+  let bestGrid = null;
+
   for (let r = 1; r <= maxRows; r++) {
     for (let c = 1; c <= maxCols; c++) {
       const seats = countSeats(c, r);
       if (seats >= targetSeats) {
-        const diff = seats - targetSeats;
-        const ratio = c / r;
-        const ratioDiff = Math.abs(ratio - targetRatio);
+        const overshoot = seats - targetSeats;
+        // Prefer grids where cols >= rows (wide, shallow — realistic classroom)
+        // Give a heavy bonus for wide grids (more columns per row)
+        const widthBias = Math.max(0, r - c) * 200; // penalise tall grids
         let symmetryPenalty = 0;
-        if (layoutId === "clusters") {
-          if (c % 3 !== 2) symmetryPenalty += 500; // Heavily penalize grids that split a cluster horizontally
-          if (r % 3 !== 2) symmetryPenalty += 50;  // Penalize grids that split a cluster vertically
+        if (layoutId === "pairs") {
+          if (c % 3 !== 2) symmetryPenalty += 200;
         }
-
-        const score = diff * 100 + ratioDiff + symmetryPenalty;
-        
+        const score = overshoot * 80 + widthBias + symmetryPenalty;
         if (!bestGrid || score < bestGrid.score) {
           bestGrid = { cols: c, rows: r, actualSeats: seats, isMaxedOut: false, score };
         }

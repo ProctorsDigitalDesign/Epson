@@ -5,7 +5,7 @@ export const ROOM_PRESETS = {
   small: {
     id: "small",
     label: "Small",
-    description: "Primary / tutorial rooms",
+    description: "(approx 6m x 7m)",
     width: 6,    // metres (left-right, perpendicular to screen)
     depth: 7,    // metres (front-to-back, parallel to viewing axis)
     defaultSeats: { cols: 4, rows: 4 },
@@ -15,7 +15,7 @@ export const ROOM_PRESETS = {
   medium: {
     id: "medium",
     label: "Medium",
-    description: "Standard secondary classroom",
+    description: "(approx 8m x 9m)",
     width: 8,
     depth: 9,
     defaultSeats: { cols: 6, rows: 5 },
@@ -25,7 +25,7 @@ export const ROOM_PRESETS = {
   large: {
     id: "large",
     label: "Large",
-    description: "Lecture hall / assembly room",
+    description: "(approx 12m x 14m)",
     width: 12,
     depth: 14,
     defaultSeats: { cols: 8, rows: 7 },

@@ -1,11 +1,13 @@
 "use client";
+import { useEffect } from "react";
 import styles from "./SimulatorSetup.module.css";
 import { PROJECTORS } from "../data/projectors";
 import { ROOM_PRESETS } from "../data/rooms";
+import { calculateOptimalGrid, screenMetresToDiagInches } from "../utils/calculations";
 
 const SEATING_LAYOUTS = [
   { id: "rows", label: "Rows" },
-  { id: "clusters", label: "Clusters (Groups of 4)" },
+  { id: "pairs", label: "Pairs (Groups of 2)" },
   { id: "ushape", label: "U-Shape" },
   { id: "theatre", label: "Theatre Style" },
 ];
@@ -15,18 +17,45 @@ export default function SimulatorSetup({ config, onChange }) {
   const room = ROOM_PRESETS[config.roomId];
   const activeProjector = PROJECTORS.find(p => p.id === config.projectorId);
 
+  const effectiveWidth = config.customWidth ?? room?.width;
+  const effectiveDepth = config.customDepth ?? room?.depth;
+  const seatingLayout = config.seatingLayout ?? "rows";
+
+  const { actualSeats: maxPossibleSeats } = calculateOptimalGrid(
+    10000, 
+    effectiveWidth, 
+    effectiveDepth, 
+    seatingLayout
+  );
+
+  const availableWallWidth = Math.max(1, effectiveWidth - 2); // 1m margin on each side
+  const maxScreenSizeForRoom = screenMetresToDiagInches(availableWallWidth, activeProjector?.aspectRatio ?? "16:9");
+  const absoluteMaxScreenSize = Math.min(activeProjector?.screenSizeRange[1] ?? 300, maxScreenSizeForRoom);
+
+  useEffect(() => {
+    if (config.targetSeats !== undefined && config.targetSeats > maxPossibleSeats) {
+      onChange({ targetSeats: maxPossibleSeats });
+    }
+    if (config.screenSize !== undefined && config.screenSize > absoluteMaxScreenSize) {
+      onChange({ screenSize: absoluteMaxScreenSize });
+    }
+  }, [maxPossibleSeats, absoluteMaxScreenSize, config.targetSeats, config.screenSize, onChange]);
+
   const handleSeatsChange = (e) => {
     const val = e.target.value;
     if (val === "") {
       onChange({ targetSeats: "" });
     } else {
-      onChange({ targetSeats: parseInt(val, 10) });
+      let num = parseInt(val, 10);
+      if (num > maxPossibleSeats) num = maxPossibleSeats;
+      onChange({ targetSeats: num });
     }
   };
 
   const handleSeatsStep = (step) => {
     const current = parseInt(config.targetSeats, 10) || room?.defaultSeats?.cols * room?.defaultSeats?.rows || 30;
-    const next = Math.max(1, current + step);
+    let next = Math.max(1, current + step);
+    if (next > maxPossibleSeats) next = maxPossibleSeats;
     onChange({ targetSeats: next });
   };
 
@@ -98,9 +127,12 @@ export default function SimulatorSetup({ config, onChange }) {
               onChange={(e) => {
                 const newProjId = e.target.value;
                 const newProj = PROJECTORS.find(p => p.id === newProjId);
-                const max = newProj ? newProj.screenSizeRange[1] : 300;
+                const projMax = newProj ? newProj.screenSizeRange[1] : 300;
+                const availableWallWidth = Math.max(1, effectiveWidth - 2);
+                const projRoomMax = screenMetresToDiagInches(availableWallWidth, newProj?.aspectRatio ?? "16:9");
+                const finalMax = Math.min(projMax, projRoomMax);
                 let newSize = config.screenSize;
-                if (newSize > max) newSize = max;
+                if (newSize > finalMax) newSize = finalMax;
                 onChange({ projectorId: newProjId, screenSize: newSize });
               }}
             >
@@ -132,23 +164,25 @@ export default function SimulatorSetup({ config, onChange }) {
         </div>
         <div className={styles.field}>
           <label className={styles.label} htmlFor="screenSize">
-            Screen / Display Size (inches)
+            Screen / Display Size
           </label>
-          <input
-            id="screenSize"
-            type="number"
-            className={styles.input}
-            min={40}
-            max={activeProjector?.screenSizeRange[1] ?? 300}
-            step={10}
-            value={config.screenSize}
-            onChange={(e) => {
-              let val = parseInt(e.target.value, 10);
-              const max = activeProjector?.screenSizeRange[1] ?? 300;
-              if (val > max) val = max;
-              onChange({ screenSize: val });
-            }}
-          />
+          <div className={styles.rangeWrapper}>
+            <input
+              id="screenSize"
+              type="range"
+              className={styles.rangeInput}
+              min={40}
+              max={absoluteMaxScreenSize}
+              step={5}
+              value={config.screenSize}
+              onChange={(e) => {
+                let val = parseInt(e.target.value, 10);
+                if (val > absoluteMaxScreenSize) val = absoluteMaxScreenSize;
+                onChange({ screenSize: val });
+              }}
+            />
+            <span className={styles.rangeValue}>{config.screenSize}"</span>
+          </div>
         </div>
       </div>
 
@@ -179,7 +213,7 @@ export default function SimulatorSetup({ config, onChange }) {
         </div>
         <div className={styles.field}>
           <label className={styles.label} htmlFor="targetSeats">
-            Target Number of Seats
+            Target Number of Seats (Max: {maxPossibleSeats})
           </label>
           <div className={styles.numberInputWrapper}>
             <input
@@ -187,7 +221,7 @@ export default function SimulatorSetup({ config, onChange }) {
               type="number"
               className={styles.numberInput}
               min={1}
-              max={300}
+              max={maxPossibleSeats}
               step={1}
               value={config.targetSeats !== undefined ? config.targetSeats : (room?.defaultSeats?.cols * room?.defaultSeats?.rows ?? 30)}
               onChange={handleSeatsChange}
